@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Catalogo_Blazor.Server.Controllers
@@ -22,9 +23,15 @@ namespace Catalogo_Blazor.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Categoria>>> Get([FromQuery] Paginacao paginacao)
+        public async Task<ActionResult<List<Categoria>>> Get([FromQuery] Paginacao paginacao, [FromQuery] string nome)
         {
             var queryable = context.Categorias.AsQueryable();
+
+            if (!string.IsNullOrEmpty(nome))
+            {
+                queryable = queryable.Where(x => x.Nome.Contains(nome));
+            }
+
             await HttpContext.InserirParametroEmPageResponse(queryable, paginacao.QtdPorPagina);
 
             return await queryable.Paginar(paginacao).ToListAsync();

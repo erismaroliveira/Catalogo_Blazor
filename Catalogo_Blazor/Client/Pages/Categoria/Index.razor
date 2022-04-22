@@ -8,6 +8,19 @@
     <a class="btn btn-success" href="categoria/create">Criar Categoria</a>
 </div>
 <br />
+
+<div class="form-inline">
+    <label class="sr-only" for="filter-name">Filtro</label>
+    <input type="text" class="form-control mb-2 mr-sm-2" @bind="nomeFiltro" placeholder="Filtrar pelo nome" />
+    <button type="submit" class="btn btn-info mr-sm-2 mb-2" @onclick="Filtrar">
+        Filtrar
+    </button>
+    <button type="submit" class="btn btn-danger mb-2" @onclick="LimparFiltro">
+        Limpar
+    </button>
+</div>
+<br />
+
 @if(categorias == null)
 {
     <p><em>Carregando...</em></p>
@@ -28,7 +41,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var categoria in categorias)
+           @foreach (var categoria in categorias)
            {
                <tr>
                    <td>@categoria.Nome</td>
@@ -58,6 +71,7 @@ else
 
     private int QtdTotalPaginas;
     private int PaginaAtual = 1;
+    private string nomeFiltro = string.Empty;
 
     Confirma confirma;
     int codigoCategoria;
@@ -67,10 +81,23 @@ else
         await CarregaCategorias();
     }
 
+    private async Task Filtrar()
+    {
+        PaginaAtual = 1;
+        await CarregaCategorias();
+    }
+
+    private async Task LimparFiltro()
+    {
+        nomeFiltro = string.Empty;
+        PaginaAtual = 1;
+        await CarregaCategorias();
+    }
+
     public async Task CarregaCategorias(int pagina = 1, int qtdPorPagina = 5)
     {
         var httpResponse = 
-            await http.GetAsync($"api/Categoria?pagina={pagina}&qtdPorPagina={qtdPorPagina}");
+            await http.GetAsync($"api/Categoria?pagina={pagina}&qtdPorPagina={qtdPorPagina}&nome={nomeFiltro}");
 
         if (httpResponse.IsSuccessStatusCode)
         {
@@ -83,12 +110,6 @@ else
                 PropertyNameCaseInsensitive = true
             });
         }
-        //categorias = await http.GetFromJsonAsync<Categoria[]>("api/Categoria");
-        //categorias = new Categoria[]
-        //{
-        //    new Categoria(){CategoriaId = 1, Nome = "Televisão", Descricao = "Televisão 42 polegadas LED" },
-        //    new Categoria(){CategoriaId = 2, Nome = "Celular", Descricao = "Smartphone XIAOMI REDMI 9" }
-        //};
     }
 
     private async Task PaginaSelecionada(int pagina)
