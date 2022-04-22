@@ -12,8 +12,6 @@ namespace Catalogo_Blazor.Shared.Models
         [MaxLength(200)]
         public string Descricao { get; set; }
         public decimal Preco { get; set; }
-
-        [MaxLength(250)]
         public string ImagemUrl { get; set; }
 
         //indica o relacionamento
