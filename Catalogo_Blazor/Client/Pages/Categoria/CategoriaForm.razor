@@ -5,7 +5,7 @@
     <div class="form-group">
         <label for="nome">Nome</label>
         <div>
-            <InputText @bind-Value="Categoria.Nome" class="form-control" />
+            <InputText id="txtCategoriaNome" @bind-Value="Categoria.Nome" class="form-control" />
             <ValidationMessage For="@(() => Categoria.Nome)" />
         </div>
     </div>
