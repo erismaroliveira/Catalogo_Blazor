@@ -1,0 +1,117 @@
+﻿@page "/categoria"
+@inject HttpClient http
+@using System.Text.Json
+
+<h2>Categorias</h2>
+
+<div>
+    <a class="btn btn-success" href="categoria/create">Criar Categoria</a>
+</div>
+<br />
+@if(categorias == null)
+{
+    <p><em>Carregando...</em></p>
+}
+else if(categorias.Count == 0)
+{
+    <p><em>Não existem categorias cadastradas...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Categoria</th>
+                <th>Descrição</th>
+                <th>Editar</th>
+                <th>Deletar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var categoria in categorias)
+           {
+               <tr>
+                   <td>@categoria.Nome</td>
+                   <td>@categoria.Descricao</td>
+                   <td>
+                       <a class="btn btn-info" href="categoria/edit/@categoria.CategoriaId">Editar</a>
+                   </td>
+                   <td>
+                       <a class="btn btn-danger" @onclick="@(() => ExcluirCategoria(categoria.CategoriaId))">Deletar</a>
+                   </td>
+               </tr>
+           }
+        </tbody>
+    </table>
+}
+
+<Confirma @ref="confirma" onCancela="CancelaConfirma" onConfirma="DeletaConfirma">
+    <div>Deseja realmente excluir este item?</div>
+</Confirma>
+
+<hr />
+
+<Paginacao QtdTotalPaginas="QtdTotalPaginas" PaginaAtual="PaginaAtual" Raio="2" PaginaSelecionada="PaginaSelecionada" />
+
+@code {
+    List<Categoria> categorias { get; set; }
+
+    private int QtdTotalPaginas;
+    private int PaginaAtual = 1;
+
+    Confirma confirma;
+    int codigoCategoria;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregaCategorias();
+    }
+
+    public async Task CarregaCategorias(int pagina = 1, int qtdPorPagina = 5)
+    {
+        var httpResponse = 
+            await http.GetAsync($"api/Categoria?pagina={pagina}&qtdPorPagina={qtdPorPagina}");
+
+        if (httpResponse.IsSuccessStatusCode)
+        {
+            QtdTotalPaginas = int.Parse(httpResponse.Headers.GetValues("totalPaginas").FirstOrDefault());
+
+            var responseString = await httpResponse.Content.ReadAsStringAsync();
+
+            categorias = JsonSerializer.Deserialize<List<Categoria>>(responseString, new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        //categorias = await http.GetFromJsonAsync<Categoria[]>("api/Categoria");
+        //categorias = new Categoria[]
+        //{
+        //    new Categoria(){CategoriaId = 1, Nome = "Televisão", Descricao = "Televisão 42 polegadas LED" },
+        //    new Categoria(){CategoriaId = 2, Nome = "Celular", Descricao = "Smartphone XIAOMI REDMI 9" }
+        //};
+    }
+
+    private async Task PaginaSelecionada(int pagina)
+    {
+        PaginaAtual = pagina;
+        await CarregaCategorias(pagina);
+    }
+
+    private void ExcluirCategoria(int categoriaId)
+    {
+        confirma.Exibir();
+        codigoCategoria = categoriaId;
+    }
+
+    private async Task DeletaConfirma()
+    {
+        await http.DeleteAsync($"api/Categoria/{codigoCategoria}");
+        confirma.Ocultar();
+        await CarregaCategorias();
+    }
+
+    private void CancelaConfirma()
+    {
+        confirma.Ocultar();
+    }
+}
