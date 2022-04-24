@@ -1,8 +1,26 @@
 ﻿@page "/produto"
+@using System.Text.Json
 @inject HttpClient http
 @inject NavigationManager navigation
 
 <h2>Produtos</h2>
+
+<div>
+    <a class="btn btn-success" href="produto/create">Criar Produto</a>
+</div>
+<br />
+
+<div class="form-inline">
+    <label class="sr-only" for="filter-name">Filtro</label>
+    <input type="text" class="form-control mb-2 mr-sm-2" @bind="nomeFiltro" placeholder="Filtrar pelo nome" />
+    <button type="submit" class="btn btn-info mr-sm-2 mb-2" @onclick="Filtrar">
+        Filtrar
+    </button>
+    <button type="submit" class="btn btn-danger mb-2" @onclick="LimparFiltro">
+        Limpar
+    </button>
+</div>
+<br />
 
 @if(produtos == null)
 {
@@ -47,24 +65,48 @@ else
     <div>Deseja realmente excluir este item?</div>
 </Confirma>
 
-<br />
-<div>
-    <a class="btn btn-success" href="produto/create">Criar Produto</a>
-</div>
+<hr />
+
+<Paginacao QtdTotalPaginas="QtdTotalPaginas" PaginaAtual="PaginaAtual" Raio="2" PaginaSelecionada="PaginaSelecionada" />
+
 
 @code {
     List<Produto> produtos { get; set; }
     Confirma confirma;
     int codigoProduto;
 
+    private string nomeFiltro = string.Empty;
+
+    private int QtdTotalPaginas;
+    private int PaginaAtual = 1;
+
     protected override async Task OnInitializedAsync()
     {
         await CarregaProdutos();
     }
 
-    public async Task CarregaProdutos()
+    public async Task CarregaProdutos(int pagina = 1, int qtdPorPagina = 5)
     {
-        produtos = await http.GetFromJsonAsync<List<Produto>>("api/Produto");
+        var httpResponse = 
+            await http.GetAsync($"api/Produto?pagina={pagina}&qtdPorPagina={qtdPorPagina}&nome={nomeFiltro}");
+
+        if (httpResponse.IsSuccessStatusCode)
+        {
+            QtdTotalPaginas = int.Parse(httpResponse.Headers.GetValues("totalPaginas").FirstOrDefault());
+
+            var responseString = await httpResponse.Content.ReadAsStringAsync();
+
+            produtos = JsonSerializer.Deserialize<List<Produto>>(responseString, new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+    }
+
+    private async Task PaginaSelecionada(int pagina)
+    {
+        PaginaAtual = pagina;
+        await CarregaProdutos(pagina);
     }
 
     private void DeletarProduto(int produtoId)
@@ -82,6 +124,19 @@ else
     {
         await http.DeleteAsync($"api/Produto/{codigoProduto}");
         confirma.Ocultar();
+        await CarregaProdutos();
+    }
+
+    private async Task Filtrar()
+    {
+        PaginaAtual = 1;
+        await CarregaProdutos();
+    }
+
+    private async Task LimparFiltro()
+    {
+        nomeFiltro = string.Empty;
+        PaginaAtual = 1;
         await CarregaProdutos();
     }
 }
