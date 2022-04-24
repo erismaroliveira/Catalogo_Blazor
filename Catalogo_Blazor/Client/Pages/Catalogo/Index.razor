@@ -1,0 +1,74 @@
+﻿@page "/catalogo"
+@inject HttpClient http
+
+<h1>Catálogo de Produtos</h1>
+
+<div class="form-group">
+    <select @onchange="CategoriaSelectionChanged" class="form-control">
+        @if(categorias != null)
+        {
+           @foreach (var categoria in categorias)
+           {
+               <option value="@categoria.CategoriaId">
+                   @categoria.Nome
+               </option>
+           }
+        }
+    </select>
+</div>
+
+@if(produtos == null)
+{
+    <p><em>Carregando...</em></p>
+}
+else if(produtos.Count == 0)
+{
+    <p><em>Não existem produtos cadastrados...</em></p>
+}
+else
+{
+    <div class="row">
+       @foreach (var produto in produtos)
+       {
+           <div class="col-sm-3 col-lg-3 col-md-3">
+               <div class="card" style="border:none">
+                   <img src="@produto.ImagemUrl" class="img-rounded" alt="@produto.Nome" width="180" height="180" />
+                   <div class="card-body">
+                       <h4 class="pull-right">@produto.Preco</h4>
+                       <h4 class="card-title">@produto.Nome</h4>
+                       <p class="card-text">@produto.Descricao</p>
+                       <a href="produto/detalhes/@produto.ProdutoId">Detalhes</a>
+                   </div>
+               </div>
+           </div>
+       }
+    </div>
+}
+
+@code {
+    List<Produto> produtos { get; set; }
+    List<Categoria> categorias { get; set; }
+    private int codigoCategoria;
+
+    protected override async Task OnInitializedAsync()
+    {
+        categorias = await http.GetFromJsonAsync<List<Categoria>>("api/Categoria/todas");
+        codigoCategoria = categorias[0].CategoriaId;
+        await CarregaProdutos();
+    }
+
+    public async Task CarregaProdutos()
+    {
+        produtos = await http.GetFromJsonAsync<List<Produto>>($"api/Produto/categorias/{codigoCategoria}");
+        StateHasChanged();
+    }
+
+    private async Task CategoriaSelectionChanged(ChangeEventArgs e)
+    {
+        if(int.TryParse(e.Value.ToString(), out int id))
+        {
+            codigoCategoria = id;
+            await CarregaProdutos();
+        }
+    }
+}

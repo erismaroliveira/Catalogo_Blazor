@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Catalogo_Blazor.Server.Controllers
@@ -29,6 +30,12 @@ namespace Catalogo_Blazor.Server.Controllers
         public async Task<ActionResult<Produto>> Get(int id)
         {
             return await context.Produtos.FirstOrDefaultAsync(x => x.ProdutoId == id);
+        }
+
+        [HttpGet("categorias/{id:int}")]
+        public async Task<ActionResult<List<Produto>>> GetProdutosCategoria(int id)
+        {
+            return await context.Produtos.Where(p => p.CategoriaId == id).ToListAsync();
         }
 
         [HttpPost]
