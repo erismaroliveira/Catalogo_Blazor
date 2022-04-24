@@ -1,4 +1,5 @@
 ﻿@page "/catalogo"
+@page "/catalogo/{categoriaId:int}"
 @inject HttpClient http
 
 <h1>Catálogo de Produtos</h1>
@@ -9,7 +10,7 @@
         {
            @foreach (var categoria in categorias)
            {
-               <option value="@categoria.CategoriaId">
+               <option value="@categoria.CategoriaId" selected="@(categoria.CategoriaId == categoriaId ? true : false)">
                    @categoria.Nome
                </option>
            }
@@ -50,10 +51,20 @@ else
     List<Categoria> categorias { get; set; }
     private int codigoCategoria;
 
-    protected override async Task OnInitializedAsync()
+    [Parameter]
+    public int categoriaId { get; set; }
+
+    protected override async Task OnParametersSetAsync()
     {
         categorias = await http.GetFromJsonAsync<List<Categoria>>("api/Categoria/todas");
-        codigoCategoria = categorias[0].CategoriaId;
+        if(categoriaId == 0)
+        {
+            codigoCategoria = categorias[0].CategoriaId;
+        }
+        else
+        {
+            codigoCategoria = categoriaId;
+        }
         await CarregaProdutos();
     }
 

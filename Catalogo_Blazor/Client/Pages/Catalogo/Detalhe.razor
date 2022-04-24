@@ -1,0 +1,29 @@
+﻿@page "/produto/detalhes/{produtoId:int}"
+@inject HttpClient http
+
+<div class="col-sm-12 col-lg-12 col-md-12">
+    <div class="card" style="border:none">
+        <img src="@produto.ImagemUrl" class="img-rounded" alt="@produto.Nome" width="300" height="300" />
+        <div class="card-body">
+            <h4 class="pull-right">@produto.Preco</h4>
+            <h4 class="card-title">@produto.Nome</h4>
+            <p class="card-text">@produto.Descricao</p>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a href="/catalogo/@produto.CategoriaId" class="btn btn-link">Retornar</a>
+</div>
+
+@code {
+    Produto produto = new Produto();
+
+    [Parameter]
+    public int produtoId { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        produto = await http.GetFromJsonAsync<Produto>($"api/Produto/{produtoId}");
+    }
+}
