@@ -1,6 +1,7 @@
 ﻿@page "/produto/create"
 @inject HttpClient http
 @inject NavigationManager navigation
+@inject IJSRuntime js
 
 <h2>Novo Produto</h2>
 
@@ -8,6 +9,19 @@
 
 @code {
     Produto produto = new Produto();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Focus("txtProdutoNome");
+        }
+    }
+
+    public async Task Focus(string elementId)
+    {
+        await js.InvokeVoidAsync("focusById", elementId);
+    }
 
     private async Task CriarProduto()
     {
