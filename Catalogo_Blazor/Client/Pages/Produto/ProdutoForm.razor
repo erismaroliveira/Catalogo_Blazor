@@ -28,9 +28,11 @@
         <select @onchange="CategoriaSelectionChanged" class="form-control">
             @if(categorias != null)
             {
-                @foreach (var categoria in categorias)
+               @foreach (var categoria in categorias)
                {
-                   <option value="@categoria.CategoriaId">@categoria.Nome</option>
+                   <option value="@categoria.CategoriaId" selected="@(categoria.CategoriaId == Produto.CategoriaId ? true : false)">
+                       @categoria.Nome
+                   </option>
                }
             }
         </select>
@@ -79,7 +81,7 @@
     private async Task CarregaImagem(InputFileChangeEventArgs e)
     {
         var format = "image/jpeg";
-        var imageFile = await e.File.RequestImageFileAsync(format, 640, 480);
+        var imageFile = await e.File.RequestImageFileAsync(format, 300, 300);
 
         using var fileStream = imageFile.OpenReadStream(maxFileSize);
         using var memoryStream = new MemoryStream();
