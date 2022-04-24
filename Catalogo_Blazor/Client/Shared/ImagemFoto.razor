@@ -1,0 +1,23 @@
+﻿<div>
+    @if(ImagemRemota != null)
+    {
+        <div>
+            <div style="margin:10px">
+                <img src="@ImagemRemota" />
+            </div>
+        </div>
+    }
+    else
+    {
+        <div>
+            <div style="margin:10px">
+                <img src="/images/sem-foto.jpg" style="width: 150px" />
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string ImagemRemota { get; set; }
+}

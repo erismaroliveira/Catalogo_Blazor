@@ -14,4 +14,12 @@
     <ProjectReference Include="..\Shared\Catalogo_Blazor.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Shared\ImagemFoto.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>
