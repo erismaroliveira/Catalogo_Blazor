@@ -35,13 +35,17 @@ else
                        <a class="btn btn-info" href="produto/edit/@produto.ProdutoId">Editar</a>
                    </td>
                    <td>
-                       <a class="btn btn-danger">Deletar</a>
+                       <a class="btn btn-danger" @onclick="@(() => DeletarProduto(produto.ProdutoId))">Deletar</a>
                    </td>
                </tr>
            }
         </tbody>
     </table>
 }
+
+<Confirma @ref="confirma" onCancela="CancelaConfirma" onConfirma="DeletaConfirma">
+    <div>Deseja realmente excluir este item?</div>
+</Confirma>
 
 <br />
 <div>
@@ -50,6 +54,8 @@ else
 
 @code {
     List<Produto> produtos { get; set; }
+    Confirma confirma;
+    int codigoProduto;
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,5 +65,23 @@ else
     public async Task CarregaProdutos()
     {
         produtos = await http.GetFromJsonAsync<List<Produto>>("api/Produto");
+    }
+
+    private void DeletarProduto(int produtoId)
+    {
+        confirma.Exibir();
+        codigoProduto = produtoId;
+    }
+
+    private void CancelaConfirma()
+    {
+        confirma.Ocultar();
+    }
+
+    private async Task DeletaConfirma()
+    {
+        await http.DeleteAsync($"api/Produto/{codigoProduto}");
+        confirma.Ocultar();
+        await CarregaProdutos();
     }
 }
