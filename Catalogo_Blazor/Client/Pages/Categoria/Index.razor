@@ -5,7 +5,7 @@
 <h2>Categorias</h2>
 
 <div>
-    <a class="btn btn-success" href="categoria/create">Criar Categoria</a>
+    <a class="btn btn-success" href="categoria/create"><i class="oi oi-plus"></i> Criar Categoria</a>
 </div>
 <br />
 
@@ -13,10 +13,10 @@
     <label class="sr-only" for="filter-name">Filtro</label>
     <input type="text" class="form-control mb-2 mr-sm-2" @bind="nomeFiltro" placeholder="Filtrar pelo nome" />
     <button type="submit" class="btn btn-info mr-sm-2 mb-2" @onclick="Filtrar">
-        Filtrar
+        <i class="oi oi-magnifying-glass"></i> Filtrar
     </button>
     <button type="submit" class="btn btn-danger mb-2" @onclick="LimparFiltro">
-        Limpar
+        <i class="oi oi-trash"></i> Limpar
     </button>
 </div>
 <br />
@@ -47,10 +47,10 @@ else
                    <td>@categoria.Nome</td>
                    <td>@categoria.Descricao</td>
                    <td>
-                       <a class="btn btn-info" href="categoria/edit/@categoria.CategoriaId">Editar</a>
+                       <a class="btn btn-info" href="categoria/edit/@categoria.CategoriaId"><i class="oi oi-pencil"></i></a>
                    </td>
                    <td>
-                       <a class="btn btn-danger" @onclick="@(() => ExcluirCategoria(categoria.CategoriaId))">Deletar</a>
+                       <a class="btn btn-danger" style="cursor:pointer" @onclick="@(() => ExcluirCategoria(categoria.CategoriaId))"><i class="oi oi-trash" style="color:white"></i></a>
                    </td>
                </tr>
            }

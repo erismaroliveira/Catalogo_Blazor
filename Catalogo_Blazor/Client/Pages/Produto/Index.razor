@@ -6,7 +6,7 @@
 <h2>Produtos</h2>
 
 <div>
-    <a class="btn btn-success" href="produto/create">Criar Produto</a>
+    <a class="btn btn-success" href="produto/create"><i class="oi oi-plus"></i> Criar Produto</a>
 </div>
 <br />
 
@@ -14,10 +14,10 @@
     <label class="sr-only" for="filter-name">Filtro</label>
     <input type="text" class="form-control mb-2 mr-sm-2" @bind="nomeFiltro" placeholder="Filtrar pelo nome" />
     <button type="submit" class="btn btn-info mr-sm-2 mb-2" @onclick="Filtrar">
-        Filtrar
+        <i class="oi oi-magnifying-glass"></i> Filtrar
     </button>
     <button type="submit" class="btn btn-danger mb-2" @onclick="LimparFiltro">
-        Limpar
+        <i class="oi oi-trash"></i> Limpar
     </button>
 </div>
 <br />
@@ -50,10 +50,10 @@ else
                    <td>@produto.Descricao</td>
                    <td>@produto.Preco</td>
                    <td>
-                       <a class="btn btn-info" href="produto/edit/@produto.ProdutoId">Editar</a>
+                       <a class="btn btn-info" href="produto/edit/@produto.ProdutoId"><i class="oi oi-pencil"></i></a>
                    </td>
                    <td>
-                       <a class="btn btn-danger" @onclick="@(() => DeletarProduto(produto.ProdutoId))">Deletar</a>
+                       <a class="btn btn-danger" style="cursor:pointer" @onclick="@(() => DeletarProduto(produto.ProdutoId))"><i class="oi oi-trash" style="color:white"></i></a>
                    </td>
                </tr>
            }
