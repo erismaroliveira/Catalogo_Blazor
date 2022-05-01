@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Catalogo_Blazor.Client.Auth
 {
-    public class TokenAuthenticationProvider : AuthenticationStateProvider
+    public class TokenAuthenticationProvider : AuthenticationStateProvider, IAuthorizeService
     {
         private readonly IJSRuntime js;
         private readonly HttpClient http;
@@ -90,6 +90,20 @@ namespace Catalogo_Blazor.Client.Auth
                 case 3: base64 += "="; break;
             }
             return Convert.FromBase64String(base64);
+        }
+
+        public async Task Login(string token)
+        {
+            await js.SetInLocalStorage(tokenKey, token);
+            var authState = CreateAuthenticationState(token);
+            NotifyAuthenticationStateChanged(Task.FromResult(authState));
+        }
+
+        public async Task Logout()
+        {
+            await js.RemoveItem(tokenKey);
+            http.DefaultRequestHeaders.Authorization = null;
+            NotifyAuthenticationStateChanged(Task.FromResult(notAuthentication));
         }
     }
 }
