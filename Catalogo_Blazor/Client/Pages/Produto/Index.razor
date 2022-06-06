@@ -2,6 +2,7 @@
 @using System.Text.Json
 @inject HttpClient http
 @inject NavigationManager navigation
+@attribute [Authorize(Roles = "Admin")]
 
 <h2>Produtos</h2>
 

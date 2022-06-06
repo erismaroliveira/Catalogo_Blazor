@@ -1,6 +1,7 @@
 ﻿@page "/produto/edit/{produtoId:int}"
 @inject HttpClient http
 @inject NavigationManager navigation
+@attribute [Authorize(Roles = "Admin")]
 
 <h2>Editar Produto</h2>
 

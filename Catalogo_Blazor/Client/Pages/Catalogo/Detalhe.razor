@@ -1,5 +1,6 @@
 ﻿@page "/produto/detalhes/{produtoId:int}"
 @inject HttpClient http
+@attribute [Authorize(Roles = "Admin")]
 
 <div class="col-sm-12 col-lg-12 col-md-12">
     <div class="card" style="border:none">

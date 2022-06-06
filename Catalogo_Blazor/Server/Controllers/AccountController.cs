@@ -77,7 +77,7 @@ namespace Catalogo_Blazor.Server.Controllers
             {
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
                 new Claim(ClaimTypes.Name, user.Email),
-                new Claim("eris", "Erismar"),
+                new Claim(ClaimTypes.Role, "Admin"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

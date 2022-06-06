@@ -1,5 +1,6 @@
 ﻿@page "/categoria"
 @inject HttpClient http
+@attribute [Authorize(Roles = "Admin")]
 @using System.Text.Json
 
 <h2>Categorias</h2>

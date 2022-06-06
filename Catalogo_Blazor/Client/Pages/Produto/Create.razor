@@ -2,6 +2,7 @@
 @inject HttpClient http
 @inject NavigationManager navigation
 @inject IJSRuntime js
+@attribute [Authorize(Roles = "Admin")]
 
 <h2>Novo Produto</h2>
 
