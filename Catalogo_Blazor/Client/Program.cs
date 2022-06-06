@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Catalogo_Blazor.Client.Auth;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -17,6 +18,7 @@ namespace Catalogo_Blazor.Client
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
+            builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<TokenAuthenticationProvider>();
             builder.Services.AddScoped<IAuthorizeService, TokenAuthenticationProvider>(

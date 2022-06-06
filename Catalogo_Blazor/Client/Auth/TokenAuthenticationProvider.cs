@@ -1,4 +1,5 @@
-﻿using Catalogo_Blazor.Client.Utils;
+﻿using Blazored.LocalStorage;
+using Catalogo_Blazor.Client.Utils;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using System;
@@ -14,12 +15,13 @@ namespace Catalogo_Blazor.Client.Auth
 {
     public class TokenAuthenticationProvider : AuthenticationStateProvider, IAuthorizeService
     {
-        private readonly IJSRuntime js;
+        //private readonly IJSRuntime js;
         private readonly HttpClient http;
-        public static readonly string tokenKey = "tokenKey";
-        public TokenAuthenticationProvider(IJSRuntime ijsRuntime, HttpClient httpClient)
+        private readonly ILocalStorageService localStorage;
+        //public static readonly string tokenKey = "tokenKey";
+        public TokenAuthenticationProvider(ILocalStorageService localStorage, HttpClient httpClient)
         {
-            js = ijsRuntime;
+            this.localStorage = localStorage;
             http = httpClient;
         }
 
@@ -28,12 +30,13 @@ namespace Catalogo_Blazor.Client.Auth
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var token = await js.GetInLocalStorage(tokenKey);
+            var token = await localStorage.GetItemAsync<string>("tokenKey");
 
             if (string.IsNullOrEmpty(token))
             {
                 return notAuthentication;
             }
+            
             return CreateAuthenticationState(token);
         }
 
@@ -94,14 +97,16 @@ namespace Catalogo_Blazor.Client.Auth
 
         public async Task Login(string token)
         {
-            await js.SetInLocalStorage(tokenKey, token);
+            await localStorage.SetItemAsync("tokenKey", token);
+            //await js.SetInLocalStorage(tokenKey, token);
             var authState = CreateAuthenticationState(token);
             NotifyAuthenticationStateChanged(Task.FromResult(authState));
         }
 
         public async Task Logout()
         {
-            await js.RemoveItem(tokenKey);
+            await localStorage.RemoveItemAsync("tokenKey");
+            //await js.RemoveItem(tokenKey);
             http.DefaultRequestHeaders.Authorization = null;
             NotifyAuthenticationStateChanged(Task.FromResult(notAuthentication));
         }
